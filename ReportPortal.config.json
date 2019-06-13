@@ -1,0 +1,18 @@
+{
+  "reportPortalClientConfig": {
+    "token": "<place token at RP_USERUUID of .env file>",
+    "endpoint": "http://localhost:8080/api/v1",
+    "launch": "launch_name",
+    "project": "demo_project",
+    "debug": true,
+    "description": "Launch description text",
+    "tags": [
+      "tags",
+      "for",
+      "launch"
+    ]
+  },
+  "reportSeleniumCommands": false,
+  "seleniumCommandsLogLevel": "debug",
+  "parseTagsFromTestTitle": true
+}
