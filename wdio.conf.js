@@ -86,8 +86,8 @@ exports.config = {
     // - @wdio/cli, @wdio/config, @wdio/sync, @wdio/utils
     // Level of logging verbosity: trace | debug | info | warn | error | silent
     // logLevels: {
-        // webdriver: 'info',
-        // '@wdio/applitools-service': 'info'
+    //     webdriver: 'info',
+    //     '@wdio/applitools-service': 'info'
     // },
     //
     // If you only want to run your tests until a specific amount of tests have failed use
@@ -116,7 +116,6 @@ exports.config = {
     // commands. Instead, they hook themselves up into the test process.
     services: ['chromedriver', [RpService, {}] ],
     
-    //
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks.html
@@ -131,14 +130,23 @@ exports.config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter.html
-    reporters: ['spec', [reportportal, rpConf] ],
+    reporters: [ [reportportal, rpConf] ],
     
     //
-    // Options to be passed to Mocha.
-    // See the full list at http://mochajs.org/
+    // Options to be passed to Jasmine.
     jasmineNodeOpts: {
-        defaultTimeoutInterval: 99999999
+        //
+        // Jasmine default timeout
+        defaultTimeoutInterval: 60000,
+        //
+        // The Jasmine framework allows interception of each assertion in order to log the state of the application
+        // or website depending on the result. For example, it is pretty handy to take a screenshot every time
+        // an assertion fails.
+        expectationResultHandler: function(passed, assertion) {
+            // do something
+        }
     },
+    
     //
     // =====
     // Hooks
@@ -178,7 +186,6 @@ exports.config = {
      */
     // beforeCommand: function (commandName, args) {
     // },
-    
     /**
      * Hook that gets executed before the suite starts
      * @param {Object} suite suite details
@@ -215,7 +222,6 @@ exports.config = {
      */
     // afterSuite: function (suite) {
     // },
-    
     /**
      * Runs after a WebdriverIO command gets executed
      * @param {String} commandName hook command name

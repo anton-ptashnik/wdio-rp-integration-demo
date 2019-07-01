@@ -69,7 +69,7 @@ The value will be used to authorize test automation project to the service
 
 ## Test project setup
 
-Here we will go throught the steps needed to integrate a WDIO project with Report Portal. As you may notice the project already has a configuration file with NPM related files. In fact, Report Portal integration is done using those files, so please remove or rename them since you are going to learn how they are prepared. Here are those files:
+Here we will go throught the steps needed to integrate a WDIO project with Report Portal. As you may notice the project already has WDIO configuration file with NPM related files. In fact, Report Portal integration is done using those files. The rest of the guide will cover how to prepare those configuration ourserves, so before continuing please move or rename files so you will have a chance to refer to them if any issues appear. Here are the mentioned files:
 - wdio.conf.js
 - package.json
 - package-lock.json
@@ -103,7 +103,8 @@ Pick default values except for these questions:
 - reporters: Report Portal
 - services: reportportal, chromedriver
 5. Prepare Report Portal reporter config file
-Config file format is demonstrated here: https://webdriver.io/docs/wdio-reportportal-reporter.html#configuration.
+
+Config file format is demonstrated here: https://webdriver.io/docs/wdio-reportportal-reporter.html#configuration. The page demonstrates an example with combined Report portal and WDIO configuration, but we will separate it. Take a value of `conf` object and put it in a separate file in the project root, name it "ReportPortal.config.json"
 
 Change `URL`, `uuid`, `project` to actual values. Use values obtained during the previous section (project, uuid). Notice that `uuid` may change between service restarts, so if test results will not be coming to the service, make sure the specified `uuid` is still actual.
 
@@ -117,15 +118,16 @@ ReportPortal.config.json
   "reportPortalClientConfig": {
     "token": "00000000-0000-0000-0000-00000000000",
     "endpoint": "http://localhost:8080/api/v1",
-    "launch": "launch_name",
+    "launch": "demo_launch",
     "project": "demo_project",
     "debug": false,
-    "description": "Launch description text",
-    "tags": [
-      "tags",
-      "for",
-      "launch"
-    ]
+    "description": "WDIO-ReportPortal integration test",
+      "tags": [
+        "demo",
+        "RP",
+        "WDIO",
+        "tag4"
+      ]
   },
   "reportSeleniumCommands": false,
   "seleniumCommandsLogLevel": "debug",
@@ -136,7 +138,7 @@ ReportPortal.config.json
 
 6. Keep sensitive data separatedly
 
-It is recommended to keep sensitive data in secret, so we are not going to commit any to the repo. Let's instead use `dotenv` to conveniently provide and access such data in the project: https://www.npmjs.com/package/dotenv. Get familiar with its page on NPM repo, install it and then create `.env` file in the project root with values for these variables:
+It is recommended to keep sensitive data in secret, so we are not going to commit any to the repo. Let's instead use `dotenv` to conveniently provide and access such data in the project: https://www.npmjs.com/package/dotenv. Get familiar with its page on NPM repo, install it (`npm i dotenv -D`) and then create `.env` file in the project root with values for these variables:
 
 - RP_USERNAME
 Name of the user who will be used by auto test to verify 
@@ -147,7 +149,7 @@ User UUID. Refer to Preparing Report Portal for instructions how to get it.
 
 7. Modify WDIO config to support ReportPortal
 
-The final step we need to do is to notify WDIO that we want to use NPM modules responsible for integration. Report Portal support is enabled by 2 NPM modules: `wdio-reportportal-reporter` and `wdio-reportportal-service`. Refer to the corresponding NPM repo pages for their description. To plugin the modules use the following snippet for project config file (wdio.config.js) at the beginning:
+The final step we need to do is to notify WDIO that we want to use NPM modules responsible for integration with RP. Report Portal support is enabled by 2 NPM modules: `wdio-reportportal-reporter` and `wdio-reportportal-service`. Refer to the corresponding NPM repo pages for their description. To activate the modules insert the following snippet for project config file (wdio.config.js) at the beginning:
 
 ```JS
 require('dotenv').config()
@@ -168,13 +170,20 @@ For `reporters` array:
 ```JS
 [reportportal, rpConf]
 ```
-
+if the arrays mentioned above (services, reporters) have values 'reportportal' present as strings then remove them.
 
 # Test the integration
 
 Configuration is complete, so it is the time to make sure integration works.
 Run all tests again and go to Report Portal.
 
+0. Run test project
+
+Invoke WDIO test runner by this command:
+```bash
+npx wdio
+```
+On finish go to RP and follow the next steps.
 1. Pick the project you pointed to report test results to. In this case it is "demo_project"
 ![Report Portal project selection](screenshots/rpProjectSelection.png)
 
@@ -182,33 +191,31 @@ Run all tests again and go to Report Portal.
 
 There 2 screens where test runs info can be displayed on the platform: debug and launches. By default test results appear in `launches` screen, but if test execution was done with Report Portal config property `debug` set to `true`, the results will appear on the debug screen instead. Read here about the screens: https://reportportal.io/docs/View-launches .
 
-Since `debug` is `true` for the current project, test runs appear on `debug` screen.
+Since `debug` is `false` for the current project, test runs appear on `launches` screen.
 ![Report Portal. Test runs screen (debug)](screenshots/rpTestRuns.png)
-Pay attention how the test run's info reflects configuration set in the test automation project (ReportPortal.config.json):
+Pay attention how the test run info reflects configuration set in the test automation project (ReportPortal.config.json):
 - test run title is equal to `launch.name`
 - tags are those specified in `launch.tags`
-- user specified below title is the one used to authenticate test project by. His key is used in `server.authentication.uuid`
+- user specified below title is the one used to authenticate test project by. His key is used in `reportPortalClientConfig.token`
 
 3. Look inside a test run
 
-![Report Portal. Scenarios within a test run](screenshots/rpTestRunScenarios.png)
+![Report Portal. Test suites within a test run](screenshots/rpTestSuites.png)
 
-Pay attention each clause represents a feature with its title and description displayed.
+Open the last test run. Pay attention each clause represents test suite with its title displayed.
 
-Looking inside a feature, "Calculator screen" on example, one can see list of scenarios executed for the feature:
-![Report Portal. Scenarios for 'Calculator screen' feature](screenshots/rpFeatureScenariosList_calcScreen.png)
-
-And the same for "Calculator operations" feature:
-![Report Portal. Scenarios for 'Calculator operations' feature](screenshots/rpFeatureScenariosList_calcOperations.png)
+Looking inside a test suite to see a list of tests executed within the test suite:
+![Report Portal. Tests list](screenshots/rpTestsList.png)
 
 
-Going one step deeper test steps are displayed. Here steps for "Substract two numbers" scenario:
-![Report Portal. Steps of "Substract two numbers" scenario](screenshots/rpScenarioSteps_2numbSubstraction.png)
+And finally, each test keeps logs and attachments provided during its execution and we can see them navigating to a corresponding test.
+![Report Portal. Test logs](screenshots/rpTestLogs.png)
 
 # Next steps
 
 The guide finishes at this point. To learn more about the tools used throughout the guide visit the corresponding resources:
 
-- Report Portal official site: https://reportportal.io
-- Specflow official site: https://specflow.org
-- Docker official site: https://www.docker.com
+- Report Portal: https://reportportal.io
+- WebDriverIO: https://webdriver.io
+- Docker: https://www.docker.com
+- Dotenv: https://www.npmjs.com/package/dotenv

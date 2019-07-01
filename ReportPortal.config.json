@@ -1,18 +1,19 @@
 {
-  "reportPortalClientConfig": {
-    "token": "<place token at RP_USERUUID of .env file>",
-    "endpoint": "http://localhost:8080/api/v1",
-    "launch": "launch_name",
-    "project": "demo_project",
-    "debug": true,
-    "description": "Launch description text",
-    "tags": [
-      "tags",
-      "for",
-      "launch"
-    ]
-  },
-  "reportSeleniumCommands": false,
-  "seleniumCommandsLogLevel": "debug",
-  "parseTagsFromTestTitle": true
-}
+    "reportPortalClientConfig": {
+      "token": "<place token at RP_USERUUID of .env file>",
+      "endpoint": "http://localhost:8080/api/v1",
+      "launch": "demo_launch",
+      "project": "demo_project",
+      "debug": false,
+      "description": "WDIO-ReportPortal integration test",
+      "tags": [
+        "demo",
+        "RP",
+        "WDIO",
+        "tag4"
+      ]
+    },
+    "reportSeleniumCommands": false,
+    "seleniumCommandsLogLevel": "debug",
+    "parseTagsFromTestTitle": true
+  }
