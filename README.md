@@ -61,7 +61,7 @@ Login to a service instance and perform the next steps:
 
 If there no such project, go to `Administrate->Add project` and create it
 
-![Settings menu](screenshots/rpSettingsMenu.png)
+![Settings menu](screenshots/rpConfigMenu.png)
 
 2. Take uuid from `Profile` screen
 
@@ -185,7 +185,7 @@ npx wdio
 ```
 On finish go to RP and follow the next steps.
 1. Pick the project you pointed to report test results to. In this case it is "demo_project"
-![Report Portal project selection](screenshots/rpProjectSelection.png)
+![Report Portal project selection](screenshots/rpProjectSelectionMenu.png)
 
 2. Open launches/debug tab to see test results
 
